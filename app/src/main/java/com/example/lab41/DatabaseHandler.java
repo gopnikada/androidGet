@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DatabaseHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "songManager";
@@ -22,10 +25,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_SONGS + "("
+        String CREATE_SONGS_TABLE = "CREATE TABLE " + TABLE_SONGS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY," + KEY_ARTIST + " TEXT," + KEY_TITLE + " TEXT,"
                 + KEY_TIMESTAMP + " integer(4) not null default (strftime('%s','now'))" + ")";
-        db.execSQL(CREATE_CONTACTS_TABLE);
+        db.execSQL(CREATE_SONGS_TABLE);
     }
 
     @Override
@@ -51,5 +54,57 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Song song = new Song(cursor.getString(1),
                 cursor.getString(2));
         return song;
+    }
+    public List<Song> getAllSongs(){
+        List<Song> songList = new ArrayList<Song>();
+        String selectQuery = "SELECT  * FROM " + TABLE_SONGS;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+
+        if (cursor.moveToFirst()) {
+            do {
+                Song song = new Song();
+                song.set_id(Integer.parseInt(cursor.getString(0)));
+                song.set_artist(cursor.getString(1));
+                song.set_title(cursor.getString(2));
+                songList.add(song);
+            } while (cursor.moveToNext());
+        }
+
+        return songList;
+    }
+     public List<Integer> getIds(){
+        List<Integer> idsList = new ArrayList<Integer>();
+        String selectQuery = "SELECT "+KEY_ID+" FROM " + TABLE_SONGS;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Integer id;
+                id = cursor.getInt(0);
+                // Adding contact to list
+                idsList.add(id);
+            } while (cursor.moveToNext());
+        }
+
+        return idsList;
+    }
+
+    public List<String> getArtists() {
+        List<String> artistsList = new ArrayList<String>();
+        String selectQuery = "SELECT "+KEY_ARTIST+" FROM " + TABLE_SONGS;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                String artist;
+                artist = cursor.getString(0);
+                artistsList.add(artist);
+            } while (cursor.moveToNext());
+        }
+        return artistsList;
     }
 }

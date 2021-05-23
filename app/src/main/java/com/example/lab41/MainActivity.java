@@ -1,14 +1,19 @@
 package com.example.lab41;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.BufferedReader;
@@ -17,28 +22,85 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    ListView tvIds;
+    ListView tvArtists;
+    ListView tvTitles;
+
+    List<String> titlesList = new ArrayList<String>();
+    List<String> artistsList = new ArrayList<String>();
+    List<Integer> idsList = new ArrayList<Integer>();
     URL url = null;
+    public void restartActivity(){
+        Intent intent = new Intent(MainActivity.this, MainActivity.class);
+        startActivity(intent);
+    }
     InputStream is = null;
     Bitmap bmImg = null;
     Object responseObj;
     ImageView imageView= null;
     ProgressDialog p;
     TextView tv1;
+    Button button;
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button button=findViewById(R.id.asyncTask);
+        button=findViewById(R.id.asyncTask);
         imageView=findViewById(R.id.image);
         tv1 = findViewById(R.id.tv1);
+        tvIds = (ListView)findViewById(R.id.tvIds);
+        tvArtists = (ListView)findViewById(R.id.tvArtists);
+        tvTitles = (ListView)findViewById(R.id.tvTitles);
+
+        DatabaseHandler db = new DatabaseHandler(this);
+//        button.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View view) {
+//                //Toast.makeText(getApplicationContext(),etInputName.getText() ,Toast.LENGTH_SHORT).show();
+//                db.addSong(new Song("Oleg", "Vesna"));
+//                restartActivity();
+//            }
+//        });
+
+
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AsyncTaskExample().execute("https://webradio.io/api/radio/pi/current-song");
+                //new AsyncTaskExample().execute("https://webradio.io/api/radio/pi/current-song");
+                db.addSong(new Song("oleg", "pesnaolega"));
+                restartActivity();
             }
         });
+
+        db.getAllSongs().forEach(song -> titlesList.add(song.get_title()));
+//-----------------------------------------------------------------------
+        for (String ar: db.getArtists()) {
+            artistsList.add(ar);
+        }
+//-----------------------------------------------------------------------
+        Iterator<Integer> idsIterator = db.getIds().iterator();
+        while(idsIterator.hasNext()) idsList.add(idsIterator.next());
+//-----------------------------------------------------------------------
+
+        final ArrayAdapter<String> namesAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, artistsList);
+        tvArtists.setAdapter(namesAdapter);
+//-----------------------------------------------------------------------
+        final ArrayAdapter<String> stampsAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, titlesList);
+        tvTitles.setAdapter(stampsAdapter);
+//-----------------------------------------------------------------------
+        final ArrayAdapter<Integer> idsAdapter = new ArrayAdapter<Integer>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, idsList);
+        tvIds.setAdapter(idsAdapter);
     }
     protected class AsyncTaskExample extends AsyncTask<String, Integer, String> {
         @Override
@@ -67,8 +129,6 @@ public class MainActivity extends AppCompatActivity {
                     sb.append(str);
                 }
                 mockStr = sb.toString();
-
-
             }catch (IOException e) {
                 e.printStackTrace();
             }

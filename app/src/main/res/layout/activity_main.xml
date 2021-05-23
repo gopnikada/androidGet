@@ -8,6 +8,32 @@
     android:background = "#c1c1c1"
     android:gravity = "center_horizontal"
     tools:context = ".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="382dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ListView
+                android:id="@+id/tvIds"
+                android:layout_width="87dp"
+                android:layout_height="364dp" />
+
+            <ListView
+                android:id="@+id/tvArtists"
+                android:layout_width="167dp"
+                android:layout_height="match_parent" />
+
+            <ListView
+                android:id="@+id/tvTitles"
+                android:layout_width="match_parent"
+                android:layout_height="374dp" />
+        </LinearLayout>
+    </LinearLayout>
     <Button
         android:id = "@+id/asyncTask"
         android:text = "Download"
