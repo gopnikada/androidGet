@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         tvIds = (ListView)findViewById(R.id.tvIds);
         tvArtists = (ListView)findViewById(R.id.tvArtists);
         tvTitles = (ListView)findViewById(R.id.tvTitles);
+        String actualSong = "";
 
         DatabaseHandler db = new DatabaseHandler(this);
 //        button.setOnClickListener(new View.OnClickListener() {
@@ -74,12 +75,13 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //new AsyncTaskExample().execute("https://webradio.io/api/radio/pi/current-song");
-                db.addSong(new Song("oleg", "pesnaolega"));
+               new AsyncTaskExample(db).execute("https://webradio.io/api/radio/pi/song/picture");
+
+
                 restartActivity();
             }
         });
-
+        //db.addSong(new Song(, "pesnaolega"));
         db.getAllSongs().forEach(song -> titlesList.add(song.get_title()));
 //-----------------------------------------------------------------------
         for (String ar: db.getArtists()) {
@@ -103,6 +105,12 @@ public class MainActivity extends AppCompatActivity {
         tvIds.setAdapter(idsAdapter);
     }
     protected class AsyncTaskExample extends AsyncTask<String, Integer, String> {
+        DatabaseHandler db;
+        public AsyncTaskExample(DatabaseHandler db) {
+
+            this.db = db;
+        }
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -141,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
             if(imageView!=null) {
                 p.hide();
                 tv1.setText(s);
+                db.addSong(new Song(s, s));
             }else {
                 p.show();
             }
