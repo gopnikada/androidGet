@@ -6,12 +6,14 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,8 +25,14 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.google.gson.*;
+
 
 public class MainActivity extends AppCompatActivity {
     ListView tvIds;
@@ -75,10 +83,10 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               new AsyncTaskExample(db).execute("https://webradio.io/api/radio/pi/song/picture");
+               new AsyncTaskExample(db).execute("http://www.mofosounds.com/currentsong");
 
 
-                restartActivity();
+               // restartActivity();
             }
         });
         //db.addSong(new Song(, "pesnaolega"));
@@ -128,6 +136,8 @@ public class MainActivity extends AppCompatActivity {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setDoInput(true);
                 conn.connect();
+                System.out.println(conn.getResponseCode());
+
                 is = conn.getInputStream();
                 InputStreamReader isReader = new InputStreamReader(is);
                 BufferedReader reader = new BufferedReader(isReader);
@@ -140,6 +150,8 @@ public class MainActivity extends AppCompatActivity {
             }catch (IOException e) {
                 e.printStackTrace();
             }
+            //Toast.makeText(getApplicationContext(), mockStr, Toast.LENGTH_SHORT).show();
+
             return mockStr;
         }
 
@@ -148,10 +160,24 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(s);
             if(imageView!=null) {
                 p.hide();
-                tv1.setText(s);
-                db.addSong(new Song(s, s));
+
+                //Pattern p = Pattern.compile( "(?<=^.{15}).{5}" );
+//                Pattern p = Pattern.compile( "[0-9]" );
+//                Matcher m = p.matcher(s) ;
+//                if ( m.find() ){
+//                    Toast.makeText(getApplicationContext(), String.valueOf(m.group(1)), Toast.LENGTH_SHORT).show();
+//                }else{
+                   Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+//                }
+
+
+               // tv1.setText(s);
+
+
+
+                //db.addSong(new Song(String.valueOf(m.group(1)),String.valueOf(m.group(1))));todo uncomment
             }else {
-                p.show();
+                //p.show();
             }
         }
 
