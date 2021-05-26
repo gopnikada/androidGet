@@ -84,9 +84,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                new AsyncTaskExample(db).execute("http://www.mofosounds.com/currentsong");
-
-
-               // restartActivity();
+               restartActivity();
             }
         });
         //db.addSong(new Song(, "pesnaolega"));
@@ -150,8 +148,6 @@ public class MainActivity extends AppCompatActivity {
             }catch (IOException e) {
                 e.printStackTrace();
             }
-            //Toast.makeText(getApplicationContext(), mockStr, Toast.LENGTH_SHORT).show();
-
             return mockStr;
         }
 
@@ -160,24 +156,10 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(s);
             if(imageView!=null) {
                 p.hide();
-
-                //Pattern p = Pattern.compile( "(?<=^.{15}).{5}" );
-//                Pattern p = Pattern.compile( "[0-9]" );
-//                Matcher m = p.matcher(s) ;
-//                if ( m.find() ){
-//                    Toast.makeText(getApplicationContext(), String.valueOf(m.group(1)), Toast.LENGTH_SHORT).show();
-//                }else{
-                   Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
-//                }
-
-
-               // tv1.setText(s);
-
-
-
-                //db.addSong(new Song(String.valueOf(m.group(1)),String.valueOf(m.group(1))));todo uncomment
+                List<String> list = Arrays.asList(s.split("-"));
+                db.addSong(new Song(list.get(0), list.get(1)));
             }else {
-                //p.show();
+                p.show();
             }
         }
 
