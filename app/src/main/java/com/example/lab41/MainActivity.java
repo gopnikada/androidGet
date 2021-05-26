@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -157,7 +158,15 @@ public class MainActivity extends AppCompatActivity {
             if(imageView!=null) {
                 p.hide();
                 List<String> list = Arrays.asList(s.split("-"));
-                db.addSong(new Song(list.get(0), list.get(1)));
+                Song last = db.getAllSongs().get(db.getAllSongs().size()-1);
+                if(String.valueOf(list.get(0)) != String.valueOf(last.get_artist())){
+                    Toast.makeText(getApplicationContext(), "Already in db", Toast.LENGTH_SHORT).show();
+                }else{
+
+                    db.addSong(new Song(list.get(0), list.get(1)));
+                    Toast.makeText(getApplicationContext(), "Added", Toast.LENGTH_SHORT).show();
+                }
+
             }else {
                 p.show();
             }
